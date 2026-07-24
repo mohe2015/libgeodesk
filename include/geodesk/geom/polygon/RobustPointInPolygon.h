@@ -4,6 +4,7 @@
 #pragma once
 
 #include <geodesk/feature/FastMemberIterator.h>
+#include <geodesk/feature/IntersectingMemberIterator.h>
 #include <geodesk/feature/WayCoordinateIterator.h>
 #include <geodesk/geom/LineSegment.h>
 
@@ -277,7 +278,9 @@ public:
 	{
 		assert(rel.isArea());
 		int loc = 0;
-		PipMemberIterator iter(store, rel, pt);
+		IntersectingMemberIterator iter(store, rel, Box(
+		 	pt.x, pt.y, INT_MAX, pt.y));
+		// PipMemberIterator iter(store, rel, pt);
 		// FastMemberIterator iter(store, rel);
 			// The "fast" iterator is actually the slower one
 			// TODO: constrain roles to outer/inner?

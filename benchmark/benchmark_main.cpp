@@ -90,7 +90,7 @@ TEST_CASE("Containing queries across Western Europe")
             matchCount += adminAreas.containing(xy).count();
         }
 
-        // std::cout << matchCount << '\n';  // TODO: remove
+        std::cout << matchCount << '\n';  // TODO: remove
 
         return matchCount;
     };
