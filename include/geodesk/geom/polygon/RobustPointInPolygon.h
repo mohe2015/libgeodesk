@@ -279,7 +279,14 @@ public:
 		assert(rel.isArea());
 		int loc = 0;
 		IntersectingMemberIterator iter(store, rel, Box(
-		 	pt.x, pt.y, INT_MAX, pt.y));
+		 	pt.x, pt.y, INT_MAX, pt.y),
+		 	Box::ofWorld());
+			// We don't pass the actual relation bounds, because
+			// tile culling is only skipped if the relation lies
+			// fully within the query bounds (and the query bounds
+			// here are the ray, which won't contain any actual
+			// relation)
+
 		// PipMemberIterator iter(store, rel, pt);
 		// FastMemberIterator iter(store, rel);
 			// The "fast" iterator is actually the slower one

@@ -24,7 +24,8 @@ bool SpatialFilter::acceptFeature(FeatureStore* store, FeaturePtr feature) const
 bool SpatialFilter::acceptMembers(FeatureStore* store, RelationPtr relation, RecursionGuard* guard) const
 {
 	// FastMemberIterator iter(store, relation);
-	IntersectingMemberIterator iter(store, relation, bounds());
+	IntersectingMemberIterator iter(store, relation,
+		bounds(), relation.bounds());
 	for (;;)
 	{
 		FeaturePtr member = iter.next();

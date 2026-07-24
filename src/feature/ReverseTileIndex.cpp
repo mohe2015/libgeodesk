@@ -13,21 +13,24 @@ ReverseTileIndex::~ReverseTileIndex()
     delete[] index_.load(std::memory_order_relaxed);
 }
 
-const Tile* ReverseTileIndex::initialize() const
+const uint32_t* ReverseTileIndex::initialize() const
 {
     std::lock_guard lock(indexMutex_);
-    const Tile* index = index_.load(std::memory_order_relaxed);
+    const uint32_t* index = index_.load(std::memory_order_relaxed);
     if (index != nullptr) return index;
-    Tile* newIndex = new Tile[store_->tipCount() + 1];
+
+    int tipCount = store_->tipCount();
+    uint32_t* newIndex = new uint32_t[tipCount + 1];
         // tipCount does not include entry 0
+    newIndex[0] = static_cast<uint32_t>(tipCount);
     Box world = Box::ofWorld();
     TileIndexWalker tiw(store_->tileIndex(), store_->zoomLevels(),
         world, nullptr);
     do
     {
-        assert(tiw.currentTip() <= store_->tipCount());
+        assert(tiw.currentTip() <= tipCount);
             // tipCount does not include entry 0
-        newIndex[tiw.currentTip()] = tiw.currentTile();
+        newIndex[tiw.currentTip()] = static_cast<uint32_t>(tiw.currentTile());
     }
     while (tiw.next());
     index_.store(newIndex, std::memory_order_release);

@@ -3,6 +3,8 @@
 
 #pragma once
 #include <atomic>
+#include <cassert>
+#include <cstdint>
 #include <mutex>
 #include <geodesk/geom/Tile.h>
 #include <geodesk/feature/Tip.h>
@@ -23,6 +25,47 @@ public:
     explicit ReverseTileIndex(const FeatureStore* store) noexcept : store_(store) {}
     ~ReverseTileIndex();
 
+    class Ptr
+    {
+    public:
+        explicit Ptr(const uint32_t* index) : index_(index) {}
+
+        uint32_t tipCount() const noexcept
+        {
+            return index_[0];
+        }
+
+        bool isNull() const noexcept { return index_ == nullptr; }
+
+        /// Returns the `Tile` that corresponds to the given TIP.
+        /// The given TIP must be valid for the associated store,
+        /// or the lookup will be undefined.
+        ///
+        /// @param tip a valid TIP in the FeatureStore's tile index
+        /// @return the TIP's `Tile`
+        ///
+        Tile lookupFast(Tip tip) const
+        {
+            assert(!isNull());
+            assert(!tip.isNull());
+            assert(tip <= tipCount());
+            return Tile(index_[tip]);
+        }
+
+    private:
+        const uint32_t* index_;
+    };
+
+    Ptr index() const noexcept
+    {
+        const uint32_t* index = index_.load(std::memory_order_acquire);
+        if (index == nullptr) [[unlikely]]
+        {
+            index = initialize();
+        }
+        return Ptr(index);
+    }
+
     /// Returns the `Tile` that corresponds to the given TIP.
     /// The given TIP must be valid for the associated store,
     /// or the lookup will be undefined.
@@ -32,18 +75,13 @@ public:
     ///
     Tile lookupFast(Tip tip) const
     {
-        const Tile* index = index_.load(std::memory_order_acquire);
-        if (index == nullptr) [[unlikely]]
-        {
-            index = initialize();
-        }
-        return index[tip];
+        return index().lookupFast(tip);
     }
 
 private:
-    const Tile* initialize() const;
+    const uint32_t* initialize() const;
 
-    mutable std::atomic<const Tile*> index_{nullptr};
+    mutable std::atomic<const uint32_t*> index_{nullptr};
     const FeatureStore* store_;
     mutable std::mutex indexMutex_;
 };

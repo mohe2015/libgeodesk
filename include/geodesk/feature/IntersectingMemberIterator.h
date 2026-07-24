@@ -17,10 +17,19 @@ namespace geodesk {
 class IntersectingMemberIterator : public RelatedIteratorBase<IntersectingMemberIterator,FeaturePtr,1,2>
 {
 public:
-	IntersectingMemberIterator(FeatureStore* store, RelationPtr relation, const Box& bounds) :
+	IntersectingMemberIterator(FeatureStore* store, RelationPtr relation,
+		const Box& queryBounds, const Box& relationBounds) :
 		RelatedIteratorBase(store, relation.bodyptr(), Tex::MEMBERS_START_TEX),
-		bounds_(bounds)
+		bounds_(queryBounds)
 	{
+		// We don't use the reverse tile index if the relation
+		// fully lies within the query bounds, because we'll
+		// have to check members in all tiles
+
+		if (!queryBounds.containsSimple(relationBounds))
+		{
+			index_ = store->reverseTileIndex().index();
+		}
 	}
 
 	bool readAndAcceptRole()    // CRTP override
@@ -40,12 +49,14 @@ public:
 		// of the other tile), we check if the query
 		// bbox intersects the entire 3x3 grid
 
-		Tile tile = store_->reverseTileIndex().lookupFast(tip);
+		if (index_.isNull()) return true;
+		Tile tile = index_.lookupFast(tip);
 		return tile.intersectsNeighborsSimple(bounds_);
 	}
 
 private:
 	Box bounds_;
+	ReverseTileIndex::Ptr index_ = ReverseTileIndex::Ptr(nullptr);
 };
 
 /// \endcond
