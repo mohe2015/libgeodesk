@@ -3,6 +3,7 @@
 
 #include <geodesk/filter/SpatialFilter.h>
 #include <geodesk/feature/FastMemberIterator.h>
+#include <geodesk/feature/IntersectingMemberIterator.h>
 
 namespace geodesk {
 
@@ -22,7 +23,8 @@ bool SpatialFilter::acceptFeature(FeatureStore* store, FeaturePtr feature) const
 // TODO: check member bboxes as a quick way to eliminate
 bool SpatialFilter::acceptMembers(FeatureStore* store, RelationPtr relation, RecursionGuard* guard) const
 {
-	FastMemberIterator iter(store, relation);
+	// FastMemberIterator iter(store, relation);
+	IntersectingMemberIterator iter(store, relation, bounds());
 	for (;;)
 	{
 		FeaturePtr member = iter.next();
