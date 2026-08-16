@@ -12,7 +12,7 @@ namespace clarisma {
 
 inline uint64_t readVarint35(const uint8_t*& p)
 {
-	uint32_t val;
+	uint64_t val;
 	uint8_t b;
 	b = *p++;
 	val = b & 0x7f;
