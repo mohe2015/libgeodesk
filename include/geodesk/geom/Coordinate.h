@@ -46,6 +46,16 @@ public:
 	///
 	double lat() const noexcept { return Mercator::latFromY(y); }
 
+	void translateX(int64_t deltaX)
+	{
+		x = static_cast<int32_t>(static_cast<int64_t>(x) + deltaX);
+	}
+
+	void translateY(int64_t deltaY)
+	{
+		y = static_cast<int32_t>(static_cast<int64_t>(y) + deltaY);
+	}
+
 	/// @brief Checks whether both X and Y are `0`.
 	///
 	bool isNull() const noexcept { return (x | y) == 0; };
