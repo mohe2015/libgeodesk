@@ -23,7 +23,7 @@ public:
     ///                 of the GolStringSet)
     /// @param strings  the string table (for global-code resolution)
     ///
-    void addStringList(std::string_view list, StringTable* strings);
+    void addStringList(std::string_view list, const StringTable* strings);
 
 
     /// Adds a string

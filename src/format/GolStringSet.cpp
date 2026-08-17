@@ -9,7 +9,7 @@ namespace geodesk {
 
 using namespace clarisma;
 
-void GolStringSet::addStringList(std::string_view list, StringTable* strings)
+void GolStringSet::addStringList(std::string_view list, const StringTable* strings)
 {
     size_t start = 0;
     for (;;)
