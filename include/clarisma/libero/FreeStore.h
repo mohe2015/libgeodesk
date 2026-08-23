@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <vector>
 #include <clarisma/io/File.h>
 #include <clarisma/io/FileBuffer3.h>
 #include <clarisma/io/MemoryMapping.h>

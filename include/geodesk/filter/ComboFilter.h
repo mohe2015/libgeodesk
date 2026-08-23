@@ -4,6 +4,7 @@
 #pragma once
 
 #include <geodesk/filter/SpatialFilter.h>
+#include <vector>
 
 namespace geodesk {
 

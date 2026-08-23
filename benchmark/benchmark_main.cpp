@@ -99,7 +99,7 @@ TEST_CASE("Containing queries across Western Europe")
 
 TEST_CASE("All buildings in the US (incl. overseas territories)")
 {
-    const char* golPath = "d:\\geodesk\\tests\\w2.gol"; // std::getenv("GEODESK_BENCHMARK_GOL");
+    const char* golPath = "d:\\geodesk\\tests\\world.gol"; // std::getenv("GEODESK_BENCHMARK_GOL");
 
     REQUIRE(golPath != nullptr);
     REQUIRE(golPath[0] != '\0');

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <utility>
 #include <geodesk/geom/Coordinate.h>
 
 namespace geodesk {

@@ -4,8 +4,10 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <iomanip>
 #include <istream>
+#include <stdexcept>
 #include <clarisma/util/StringViewBuffer.h>
 #include <clarisma/util/streamable.h> // for << operator support
 
