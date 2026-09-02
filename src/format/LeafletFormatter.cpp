@@ -4,6 +4,8 @@
 #include <geodesk/format/LeafletFormatter.h>
 #include <clarisma/text/Format.h>
 
+#include "clarisma/util/Json.h"
+
 using namespace clarisma;
 
 namespace geodesk {
@@ -37,13 +39,13 @@ void LeafletFormatter::writeHeader(Buffer& out, const LeafletSettings& settings,
 		"var map = L.map('map');\n"
 		"var tilesUrl='";
 	out << settings.basemapUrl;
-	out << "';\nvar tilesAttrib='";
-	out << settings.attribution;
+	out << "';\nvar tilesAttrib=\"";
+	Json::writeEscaped(out, settings.attribution);
 	out <<
-		"';\nvar tileLayer = new L.TileLayer("
+		"\";\nvar tileLayer = new L.TileLayer("
 		"tilesUrl, {minZoom: " << settings.minZoom
 		<< ", maxZoom: " << settings.maxZoom <<
-		", attribution: tilesAttrib}";
+		", attribution: tilesAttrib}, ";
 	if (settings.useRequestedWithHeader)
 	{
 		out << "[{header: 'X-Requested-With', value: '"
