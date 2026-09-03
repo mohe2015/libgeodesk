@@ -28,7 +28,8 @@ geos::geom::CoordinateSequence Polygonizer::Ring::createCoordSequence(geos::geom
 
 std::unique_ptr<geos::geom::LinearRing> Polygonizer::Ring::createLinearRing(geos::geom::GeometryFactory* context)
 {
-    return context->createLinearRing();
+    geos::geom::CoordinateSequence seq = createCoordSequence(context);
+    return context->createLinearRing(std::move(seq));
 }
 
 // TODO: error handling, check for null returns (C API does not throw)

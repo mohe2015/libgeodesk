@@ -8,7 +8,7 @@ namespace geodesk {
 using namespace clarisma;
 
 #ifdef GEODESK_WITH_GEOS
-void Polygonizer::Segment::copyTo(geos::geom::GeometryFactory* context, geos::geom::CoordinateSequence seq, int destPos) const
+void Polygonizer::Segment::copyTo(geos::geom::GeometryFactory* context, geos::geom::CoordinateSequence& seq, int destPos) const
 {
     // we skip first coordinate because it is already the end coordinate of previous
     // segment (for the first segment, the caller has to place the start coordinate)
