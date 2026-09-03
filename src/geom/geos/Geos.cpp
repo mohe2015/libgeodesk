@@ -7,11 +7,11 @@
 
 namespace geodesk {
 
-bool Geos::centroid(GEOSContextHandle_t context,
-    const GEOSGeometry* geom, Coordinate* centroid)
+bool Geos::centroid(geos::geom::GeometryFactory* context,
+    const geos::geom::Geometry::Ptr geom, Coordinate* centroid)
 {
     double x, y;
-    GEOSGeometry* c = GEOSGetCentroid_r(context, geom);
+    geos::geom::Geometry::Ptr c = GEOSGetCentroid_r(context, geom);
     if (!c) return false;
     GEOSGeomGetX_r(context, c, &x);
     GEOSGeomGetY_r(context, c, &y);
@@ -20,8 +20,8 @@ bool Geos::centroid(GEOSContextHandle_t context,
     return true;
 }
 
-double Geos::distanceMeters(GEOSContextHandle_t context,
-    const GEOSGeometry* geom1, const GEOSGeometry* geom2)
+double Geos::distanceMeters(geos::geom::GeometryFactory* context,
+    const geos::geom::Geometry::Ptr geom1, const geos::geom::Geometry::Ptr geom2)
 {
 
     GEOSCoordSequence *nearestPoints = GEOSNearestPoints_r

@@ -16,7 +16,6 @@ class TagValue;
 }
 
 class GEOSGeometry;
-class GEOSContextHandle_t;
 class OGRGeometry;
 
 namespace geodesk {
@@ -237,7 +236,7 @@ public:
     ///
     /// @returns the pointer to the newly-created `GEOSGeometry`
     ///
-    GEOSGeometry* toGeometry(GEOSContextHandle_t geosContext) const;
+    geos::geom::Geometry::Ptr toGeometry(geos::geom::GeometryFactory* geosContext) const;
 
     /// @brief Creates an `OGRGeometry` based on this Feature's geometry.
     /// Coordinates will be in EPSG:4326 (WGS-84 longitude/latitude).

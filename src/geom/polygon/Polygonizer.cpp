@@ -168,7 +168,7 @@ void Polygonizer::assignAndMergeHoles()
 }
 
 #ifdef GEODESK_WITH_GEOS
-GEOSGeometry* Polygonizer::createPolygonal(GEOSContextHandle_t context) 
+geos::geom::Geometry::Ptr Polygonizer::createPolygonal(geos::geom::GeometryFactory* context) 
 {
     if (outerRings_ == nullptr)
     {
@@ -186,7 +186,7 @@ GEOSGeometry* Polygonizer::createPolygonal(GEOSContextHandle_t context)
 
     if(ringCount == 1) return outerRings_->createPolygon(context, arena_);
     
-    GEOSGeometry** polygons = arena_.allocArray<GEOSGeometry*>(ringCount);
+    geos::geom::Geometry::Ptr* polygons = arena_.allocArray<geos::geom::Geometry::Ptr>(ringCount);
     ring = outerRings_;
     for (int i = 0; i < ringCount; i++)
     {

@@ -6,7 +6,8 @@
 #ifdef GEODESK_WITH_GEOS
 
 #include <cmath>
-#include <geos_c.h>
+#include <geos/geom/GeometryFactory.h>
+#include <geos/geom/Geometry.h>
 #include <geodesk/geom/Coordinate.h>
 
 namespace geodesk {
@@ -14,7 +15,7 @@ namespace geodesk {
 class GeosCoordinateIterator
 {
 public:
-	GeosCoordinateIterator(GEOSContextHandle_t context, const GEOSCoordSequence* coords) :
+	GeosCoordinateIterator(geos::geom::GeometryFactory* context, const GEOSCoordSequence* coords) :
 		context_(context),
 		coords_(coords),
 		coordCount_(0),
@@ -35,7 +36,7 @@ public:
 	}
 
 private:
-	GEOSContextHandle_t context_;
+	geos::geom::GeometryFactory* context_;
 	const GEOSCoordSequence* coords_;
 	unsigned int coordCount_;
 	unsigned int current_;

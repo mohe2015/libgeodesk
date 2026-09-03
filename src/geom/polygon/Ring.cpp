@@ -8,7 +8,7 @@
 namespace geodesk {
 
 #ifdef GEODESK_WITH_GEOS
-GEOSCoordSequence* Polygonizer::Ring::createCoordSequence(GEOSContextHandle_t context)
+GEOSCoordSequence* Polygonizer::Ring::createCoordSequence(geos::geom::GeometryFactory* context)
 {
     GEOSCoordSequence* coordSeq = GEOSCoordSeq_create_r(context, vertexCount_, 2);
     if (coordSeq)
@@ -29,21 +29,21 @@ GEOSCoordSequence* Polygonizer::Ring::createCoordSequence(GEOSContextHandle_t co
     return coordSeq;
 }
 
-GEOSGeometry* Polygonizer::Ring::createLinearRing(GEOSContextHandle_t context)
+geos::geom::Geometry::Ptr Polygonizer::Ring::createLinearRing(geos::geom::GeometryFactory* context)
 {
     GEOSCoordSequence* seq = createCoordSequence(context);
     return GEOSGeom_createLinearRing_r(context, seq);
 }
 
 // TODO: error handling, check for null returns (C API does not throw)
-GEOSGeometry* Polygonizer::Ring::createPolygon(GEOSContextHandle_t context, clarisma::Arena& arena)
+geos::geom::Geometry::Ptr Polygonizer::Ring::createPolygon(geos::geom::GeometryFactory* context, clarisma::Arena& arena)
 {
-    GEOSGeometry** holes;
+    geos::geom::Geometry::Ptr* holes;
     int holeCount;
     if (firstInner_)
     {
         holeCount = firstInner_->number_;
-        holes = arena.allocArray<GEOSGeometry*>(holeCount);
+        holes = arena.allocArray<geos::geom::Geometry::Ptr>(holeCount);
         Ring* inner = firstInner_;
         for (int i = 0; i < holeCount; i++)
         {
@@ -57,7 +57,7 @@ GEOSGeometry* Polygonizer::Ring::createPolygon(GEOSContextHandle_t context, clar
         holes = nullptr;
     }
 
-    GEOSGeometry* shell = createLinearRing(context);
+    geos::geom::Geometry::Ptr shell = createLinearRing(context);
     return GEOSGeom_createPolygon_r(context, shell, holes, holeCount);
 }
 #endif

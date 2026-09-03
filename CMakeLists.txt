@@ -22,8 +22,10 @@ option(GEODESK_PYTHON "Build GeoDesk with Python support" OFF)
 option(GEODESK_PYTHON_WHEELS "Enable Support for Python Wheels" OFF)
 option(GEODESK_EXAMPLES "Build example applications" OFF)
 option(GEODESK_MULTITHREADED "Allow multiple threads to use the same GOL" OFF)
-option(GEODESK_WITH_GEOS "Build GeoDesk with GEOS support" OFF)
+option(GEODESK_WITH_GEOS "Build GeoDesk with GEOS support" ON)
 option(GEODESK_WITH_OGR "Build GeoDesk with OGR support" OFF)
+
+set(GEODESK_WITH_GEOS ON)
 
 # Option to choose between static or shared library
 # Only set the option if BUILD_SHARED_LIBS is not already defined
@@ -39,12 +41,9 @@ FetchContent_Declare(gtl
 FetchContent_MakeAvailable(gtl)
 
 # Fetch GEOS 3.11.3 (tests only)
-# FetchContent_Declare(geos
-#         URL https://download.osgeo.org/geos/geos-3.13.1.tar.bz2
-#         DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
-# FetchContent_MakeAvailable(geos)
-# set(GEOS_INCLUDE_PATHS "${geos_SOURCE_DIR}/include" "${geos_BINARY_DIR}/capi" CACHE INTERNAL "")
-
+FetchContent_Declare(geos GIT_REPOSITORY https://github.com/libgeos/geos.git GIT_TAG main)
+FetchContent_MakeAvailable(geos)
+set(GEOS_INCLUDE_PATHS "${geos_SOURCE_DIR}/include")
 
 set(PREVIOUS_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 set(BUILD_SHARED_LIBS OFF)
@@ -82,7 +81,7 @@ if(GEODESK_WITH_GEOS)
     endif()
     message(STATUS "GEOS_INCLUDE_PATHS = ${GEOS_INCLUDE_PATHS}")
     list(APPEND INCLUDES ${GEOS_INCLUDE_PATHS})
-    target_link_libraries(geodesk PUBLIC geos geos_c)
+    target_link_libraries(geodesk PUBLIC GEOS::geos)
 else()
     message(STATUS "GeoDesk: Building *without* GEOS support.")
 endif()

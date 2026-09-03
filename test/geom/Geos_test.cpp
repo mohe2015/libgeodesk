@@ -9,22 +9,19 @@
 #include <set>
 #include <string_view>
 #include <catch2/catch_test_macros.hpp>
-#include <geos_c.h>
+#include <geos/geom/GeometryFactory.h>
+#include <geos/geom/Geometry.h>
 #include <geodesk/geodesk.h>
 
 using namespace geodesk;
 
 TEST_CASE("Intersects with GEOS geometry (#26)")
 {
-	GEOSContextHandle_t context = GEOS_init_r();
-	if (!context)
-	{
-		throw std::runtime_error("Failed to initialize GEOS context");
-	}
+	geos::geom::GeometryFactory::Ptr factory = geos::geom::GeometryFactory::create();
 
 	Features france("d:\\geodesk\\tests\\france.gol");
 	Feature paris = france("a[boundary=administrative][admin_level=8][name=Paris]").one();
-	GEOSGeometry* geomParis = paris.toGeometry(context);
+	std::unique_ptr<geos::geom::Geometry> geomParis = paris.toGeometry(factory.get());
 	uint64_t countByFeature = france.intersecting(paris).count();
 	uint64_t countByGeom = france.intersecting(context, geomParis).count();
 	REQUIRE(countByFeature > 1000);

@@ -43,7 +43,7 @@ const Filter* PreparedFilterFactory::forFeature(FeatureStore* store, FeaturePtr 
 }
 
 #ifdef GEODESK_WITH_GEOS
-const Filter* PreparedFilterFactory::forGeometry(GEOSContextHandle_t context, const GEOSGeometry* geom)
+const Filter* PreparedFilterFactory::forGeometry(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom)
 {
 	int geomType = GEOSGeomTypeId_r(context, geom);
 	unsigned int coordLen;
@@ -79,7 +79,7 @@ const Filter* PreparedFilterFactory::forGeometry(GEOSContextHandle_t context, co
 		int count = GEOSGetNumGeometries_r(context, geom);
 		for (int i = 0; i < count; i++)
 		{
-			const GEOSGeometry* child = GEOSGetGeometryN_r(context, geom, i);
+			const geos::geom::Geometry::Ptr child = GEOSGetGeometryN_r(context, geom, i);
 			indexBuilder_.segmentizePolygon(context, child);
 		}
 		bounds_ = Geos::getEnvelope(context, geom);

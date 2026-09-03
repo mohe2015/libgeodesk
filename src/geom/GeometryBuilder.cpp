@@ -9,38 +9,37 @@
 
 namespace geodesk {
 
-GEOSGeometry* GeometryBuilder::buildWayGeometry(const FeaturePtr way, GEOSContextHandle_t geosContext)
+std::unique_ptr<geos::geom::Geometry> GeometryBuilder::buildWayGeometry(const FeaturePtr way, geos::geom::GeometryFactory* geosContext)
 {
 	WayCoordinateIterator iter;
 	int areaFlag = way.flags() & FeatureFlags::AREA;
 	iter.start(way, areaFlag);
 	int count = iter.storedCoordinatesRemaining() + (areaFlag ? 1 : 0);
-	GEOSCoordSequence* coordSeq = GEOSCoordSeq_create_r(geosContext, count, 2);  // 2D points
+	geos::geom::CoordinateSequence coordSeq = geos::geom::CoordinateSequence::XY(count);  // 2D points
 	for (int i=0; i<count; i++)
 	{
 		Coordinate c = iter.next();
-		GEOSCoordSeq_setXY_r(geosContext, coordSeq, i, c.x, c.y);
+		coordSeq.setAt(geos::geom::CoordinateXY(c.x, c.y), i);
 	}
 	if (areaFlag)
 	{
-		GEOSGeometry* exteriorRing = GEOSGeom_createLinearRing_r(geosContext, coordSeq);
-		return GEOSGeom_createPolygon_r(geosContext, exteriorRing, NULL, 0);
+		return geosContext->createPolygon(geosContext->createLinearRing(coordSeq));
 	}
 	else
 	{
-		return GEOSGeom_createLineString_r(geosContext, coordSeq);
+		return geosContext->createLineString(coordSeq);
 	}
 }
 
 // TODO: consolidate with buildPointGeometry
-GEOSGeometry* GeometryBuilder::buildNodeGeometry(const NodePtr node, GEOSContextHandle_t geosContext)
+geos::geom::Geometry::Ptr GeometryBuilder::buildNodeGeometry(const NodePtr node, geos::geom::GeometryFactory* geosContext)
 {
 	GEOSCoordSequence* coordSeq = GEOSCoordSeq_create_r(geosContext, 1, 2);  // 1 point, 2D (X and Y)
 	GEOSCoordSeq_setXY_r(geosContext, coordSeq, 0, node.x(), node.y());
 	return GEOSGeom_createPoint_r(geosContext, coordSeq);
 }
 
-GEOSGeometry* GeometryBuilder::buildPointGeometry(int32_t x, int32_t y, GEOSContextHandle_t geosContext)
+geos::geom::Geometry::Ptr GeometryBuilder::buildPointGeometry(int32_t x, int32_t y, geos::geom::GeometryFactory* geosContext)
 {
 	GEOSCoordSequence* coordSeq = GEOSCoordSeq_create_r(geosContext, 1, 2);  // 1 point, 2D (X and Y)
 	GEOSCoordSeq_setXY_r(geosContext, coordSeq, 0, x, y);
@@ -48,7 +47,7 @@ GEOSGeometry* GeometryBuilder::buildPointGeometry(int32_t x, int32_t y, GEOSCont
 }
 
 
-GEOSGeometry* GeometryBuilder::buildBoxGeometry(const Box& box, GEOSContextHandle_t geosContext)
+geos::geom::Geometry::Ptr GeometryBuilder::buildBoxGeometry(const Box& box, geos::geom::GeometryFactory* geosContext)
 {
 	GEOSCoordSequence* coordSeq = GEOSCoordSeq_create_r(geosContext, 5, 2);  // 5 points, 2D
 	GEOSCoordSeq_setXY_r(geosContext, coordSeq, 0, box.minX(), box.minY());
@@ -56,12 +55,12 @@ GEOSGeometry* GeometryBuilder::buildBoxGeometry(const Box& box, GEOSContextHandl
 	GEOSCoordSeq_setXY_r(geosContext, coordSeq, 2, box.maxX(), box.maxY());
 	GEOSCoordSeq_setXY_r(geosContext, coordSeq, 3, box.maxX(), box.minY());
 	GEOSCoordSeq_setXY_r(geosContext, coordSeq, 4, box.minX(), box.minY());
-	GEOSGeometry* exteriorRing = GEOSGeom_createLinearRing_r(geosContext, coordSeq);
+	geos::geom::Geometry::Ptr exteriorRing = GEOSGeom_createLinearRing_r(geosContext, coordSeq);
 	return GEOSGeom_createPolygon_r(geosContext, exteriorRing, NULL, 0);
 }
 
 
-GEOSGeometry* GeometryBuilder::buildAreaRelationGeometry(FeatureStore* store, RelationPtr relation, GEOSContextHandle_t geosContext)
+geos::geom::Geometry::Ptr GeometryBuilder::buildAreaRelationGeometry(FeatureStore* store, RelationPtr relation, geos::geom::GeometryFactory* geosContext)
 {
 	Polygonizer polygonizer;
 	polygonizer.createRings(store, relation);
@@ -70,7 +69,7 @@ GEOSGeometry* GeometryBuilder::buildAreaRelationGeometry(FeatureStore* store, Re
 }
 
 
-GEOSGeometry* GeometryBuilder::buildRelationGeometry(FeatureStore* store, RelationPtr relation, GEOSContextHandle_t geosContext)
+geos::geom::Geometry::Ptr GeometryBuilder::buildRelationGeometry(FeatureStore* store, RelationPtr relation, geos::geom::GeometryFactory* geosContext)
 {
 	if (relation.isArea())
 	{
@@ -82,7 +81,7 @@ GEOSGeometry* GeometryBuilder::buildRelationGeometry(FeatureStore* store, Relati
 
 
 RelationGeometryBuilder::RelationGeometryBuilder(FeatureStore* store, 
-	RelationPtr relation, GEOSContextHandle_t geosContext) :
+	RelationPtr relation, geos::geom::GeometryFactory* geosContext) :
 	store_(store),
 	context_(geosContext),
 	guard_(relation)
@@ -99,7 +98,7 @@ void RelationGeometryBuilder::gatherMembers(RelationPtr relation)
 		FeaturePtr member = iter.next();
 		if (member.isNull()) break;
 		int memberType = member.typeCode();
-		GEOSGeometry* g;
+		geos::geom::Geometry::Ptr g;
 		if (memberType == 1)
 		{
 			WayPtr memberWay(member);
@@ -132,7 +131,7 @@ void RelationGeometryBuilder::gatherMembers(RelationPtr relation)
 }
 
 
-GEOSGeometry* RelationGeometryBuilder::build()
+geos::geom::Geometry::Ptr RelationGeometryBuilder::build()
 {
 	// TODO: different collection types
 
@@ -143,7 +142,7 @@ GEOSGeometry* RelationGeometryBuilder::build()
 }
 
 
-GEOSGeometry* GeometryBuilder::buildFeatureGeometry(FeatureStore* store, FeaturePtr feature, GEOSContextHandle_t geosContext)
+geos::geom::Geometry::Ptr GeometryBuilder::buildFeatureGeometry(FeatureStore* store, FeaturePtr feature, geos::geom::GeometryFactory* geosContext)
 {
 	int typeCode = feature.typeCode();
 	if (typeCode == 1)

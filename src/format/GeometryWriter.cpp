@@ -35,14 +35,14 @@ void GeometryWriter::writeCoordinateSegment(bool isFirst, const Coordinate* p, s
 }
 
 #ifdef GEODESK_WITH_GEOS
-void GeometryWriter::writeCoordSequence(GEOSContextHandle_t context, const GEOSCoordSequence* coords)
+void GeometryWriter::writeCoordSequence(geos::geom::GeometryFactory* context, const GEOSCoordSequence* coords)
 {
 	GeosCoordinateIterator iter(context, coords);
     writeCoordinates(iter);
 }
 
 
-void GeometryWriter::writePointCoordinates(GEOSContextHandle_t context, const GEOSGeometry* point)
+void GeometryWriter::writePointCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr point)
 {
     const GEOSCoordSequence* coords = GEOSGeom_getCoordSeq_r(context, point);
     double x = 0;
@@ -52,22 +52,22 @@ void GeometryWriter::writePointCoordinates(GEOSContextHandle_t context, const GE
 }
 
 
-void GeometryWriter::writeLineStringCoordinates(GEOSContextHandle_t context, const GEOSGeometry* line)
+void GeometryWriter::writeLineStringCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr line)
 {
     writeCoordSequence(context, GEOSGeom_getCoordSeq_r(context, line));
 }
 
 
-void GeometryWriter::writePolygonCoordinates(GEOSContextHandle_t context, const GEOSGeometry* polygon)
+void GeometryWriter::writePolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr polygon)
 {
     writeByte(coordGroupStartChar_);
-    const GEOSGeometry* exteriorRing = GEOSGetExteriorRing_r(context, polygon);
+    const geos::geom::Geometry::Ptr exteriorRing = GEOSGetExteriorRing_r(context, polygon);
     writeCoordSequence(context, GEOSGeom_getCoordSeq_r(context, exteriorRing));
 
     int numInteriorRings = GEOSGetNumInteriorRings_r(context, polygon);
     for (int i = 0; i < numInteriorRings; i++)
     {
-        const GEOSGeometry* interiorRing = GEOSGetInteriorRingN_r(context, polygon, i);
+        const geos::geom::Geometry::Ptr interiorRing = GEOSGetInteriorRingN_r(context, polygon, i);
         writeByte(',');  // TODO: always comma for all formats?
         writeCoordSequence(context, GEOSGeom_getCoordSeq_r(context, interiorRing));
     }
@@ -75,17 +75,17 @@ void GeometryWriter::writePolygonCoordinates(GEOSContextHandle_t context, const 
 }
 
 
-void GeometryWriter::writeMultiPolygonCoordinates(GEOSContextHandle_t context, const GEOSGeometry* multiPolygon)
+void GeometryWriter::writeMultiPolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr multiPolygon)
 {
     writeMultiGeometryCoordinates(context, multiPolygon,
-        [this](GEOSContextHandle_t ctx, const GEOSGeometry* g)
+        [this](geos::geom::GeometryFactory* ctx, const geos::geom::Geometry::Ptr g)
         {
             writePolygonCoordinates(ctx, g);
         });
 }
 
 void GeometryWriter::writeGeometryCoordinates(
-	GEOSContextHandle_t context, int type, const GEOSGeometry* geom)
+	geos::geom::GeometryFactory* context, int type, const geos::geom::Geometry::Ptr geom)
 {
     switch (type) 
     {
@@ -101,14 +101,14 @@ void GeometryWriter::writeGeometryCoordinates(
         break;
     case GEOS_MULTIPOINT:
         writeMultiGeometryCoordinates(context, geom,
-            [this](GEOSContextHandle_t ctx, const GEOSGeometry* g)
+            [this](geos::geom::GeometryFactory* ctx, const geos::geom::Geometry::Ptr g)
             {
                 writePointCoordinates(ctx, g);
             });
         break;
     case GEOS_MULTILINESTRING:
         writeMultiGeometryCoordinates(context, geom, 
-            [this](GEOSContextHandle_t ctx, const GEOSGeometry* g)
+            [this](geos::geom::GeometryFactory* ctx, const geos::geom::Geometry::Ptr g)
             {
                 writeLineStringCoordinates(ctx, g);
             });
