@@ -310,7 +310,7 @@ public:
     /// @param context  GEOS context associated with @p geom
     /// @param geom     GEOS geometry used as the intersection filter
     ///
-    Features intersecting(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const;
+    Features intersecting(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const;
 
     /// @brief Only features that lie entirely inside the geometry
     /// of the given Feature.

@@ -23,7 +23,7 @@ TEST_CASE("Intersects with GEOS geometry (#26)")
 	Feature paris = france("a[boundary=administrative][admin_level=8][name=Paris]").one();
 	std::unique_ptr<geos::geom::Geometry> geomParis = paris.toGeometry(factory.get());
 	uint64_t countByFeature = france.intersecting(paris).count();
-	uint64_t countByGeom = france.intersecting(factory.get(), geomParis).count();
+	uint64_t countByGeom = france.intersecting(factory.get(), *geomParis).count();
 	REQUIRE(countByFeature > 1000);
 	REQUIRE(countByFeature == countByGeom);
 }

@@ -121,7 +121,7 @@ void RelationGeometryBuilder::gatherMembers(RelationPtr relation)
 				continue;
 			}
 		}
-		geoms_.push_back(g);
+		geoms_.push_back(std::move(g));
 	}
 }
 

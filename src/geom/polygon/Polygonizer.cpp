@@ -186,14 +186,14 @@ geos::geom::Geometry::Ptr Polygonizer::createPolygonal(geos::geom::GeometryFacto
 
     if(ringCount == 1) return outerRings_->createPolygon(context, arena_);
     
-    geos::geom::Geometry::Ptr* polygons = arena_.allocArray<geos::geom::Geometry::Ptr>(ringCount);
+    auto polygons = std::vector<geos::geom::Geometry::Ptr>(ringCount);
     ring = outerRings_;
     for (int i = 0; i < ringCount; i++)
     {
         polygons[i] = ring->createPolygon(context, arena_);
         ring = ring->next();
     }
-    return GEOSGeom_createCollection_r(context, GEOS_MULTIPOLYGON, polygons, ringCount);
+    return context->createGeometryCollection(std::move(polygons));
 }
 #endif
 
