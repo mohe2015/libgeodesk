@@ -15,29 +15,25 @@ namespace geodesk {
 class GeosCoordinateIterator
 {
 public:
-	GeosCoordinateIterator(geos::geom::GeometryFactory* context, const GEOSCoordSequence* coords) :
+	GeosCoordinateIterator(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence& coords) :
 		context_(context),
 		coords_(coords),
 		coordCount_(0),
 		current_(0)
 	{
-		GEOSCoordSeq_getSize_r(context, coords, &coordCount_);
-		// If call fails, coordCount_ remains 0 (initialized in list)
-		// TODO: what can cause failure & how to handle?
+		coordCount_ = coords.size();
 	}
 
 	int coordinatesRemaining() const { return coordCount_ - current_; }
 	Coordinate next()
 	{
-		double x = 0;
-		double y = 0;
-		GEOSCoordSeq_getXY_r(context_, coords_, current_++, &x, &y);
-		return Coordinate((int32_t)std::round(x), (int32_t)std::round(y));
+		geos::geom::CoordinateXY coords = coords_.getAt(current_++);
+		return Coordinate((int32_t)std::round(coords.x), (int32_t)std::round(coords.y));
 	}
 
 private:
 	geos::geom::GeometryFactory* context_;
-	const GEOSCoordSequence* coords_;
+	const geos::geom::CoordinateSequence& coords_;
 	unsigned int coordCount_;
 	unsigned int current_;
 };

@@ -18,7 +18,7 @@ namespace geodesk {
 class CoordSequenceSlicer
 {
 public:
-	CoordSequenceSlicer(geos::geom::GeometryFactory* context, const GEOSCoordSequence* coords);
+	CoordSequenceSlicer(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence& coords);
 	bool hasMore() const { return hasMore_; }
 	void slice(MonotoneChain* chain, int maxVertexes);
 

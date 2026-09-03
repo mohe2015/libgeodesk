@@ -47,7 +47,7 @@ const Filter* PreparedFilterFactory::forGeometry(geos::geom::GeometryFactory* co
 {
 	int geomType = GEOSGeomTypeId_r(context, geom);
 	unsigned int coordLen;
-	const GEOSCoordSequence* seq;
+	const geos::geom::CoordinateSequence::Ptr seq;
 	switch (geomType)
 	{
 	case GEOS_POINT:

@@ -8,9 +8,9 @@
 namespace geodesk {
 
 #ifdef GEODESK_WITH_GEOS
-GEOSCoordSequence* Polygonizer::Ring::createCoordSequence(geos::geom::GeometryFactory* context)
+geos::geom::CoordinateSequence::Ptr Polygonizer::Ring::createCoordSequence(geos::geom::GeometryFactory* context)
 {
-    GEOSCoordSequence* coordSeq = GEOSCoordSeq_create_r(context, vertexCount_, 2);
+    geos::geom::CoordinateSequence::Ptr coordSeq = GEOSCoordSeq_create_r(context, vertexCount_, 2);
     if (coordSeq)
     {
         Segment* seg = firstSegment_;
@@ -31,7 +31,7 @@ GEOSCoordSequence* Polygonizer::Ring::createCoordSequence(geos::geom::GeometryFa
 
 geos::geom::Geometry::Ptr Polygonizer::Ring::createLinearRing(geos::geom::GeometryFactory* context)
 {
-    GEOSCoordSequence* seq = createCoordSequence(context);
+    geos::geom::CoordinateSequence::Ptr seq = createCoordSequence(context);
     return GEOSGeom_createLinearRing_r(context, seq);
 }
 

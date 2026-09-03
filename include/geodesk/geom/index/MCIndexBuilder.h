@@ -23,7 +23,7 @@ public:
 	void addLineSegment(Coordinate start, Coordinate end);
 	void segmentizeWay(WayPtr way);
 	#ifdef GEODESK_WITH_GEOS
-	void segmentizeCoords(geos::geom::GeometryFactory* context, const GEOSCoordSequence* coords);
+	void segmentizeCoords(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence::Ptr coords);
 	void segmentizePolygon(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr polygon);
 	#endif
 	void segmentizeAreaRelation(FeatureStore* store, RelationPtr rel);

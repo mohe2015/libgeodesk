@@ -54,23 +54,23 @@ protected:
 
 	void writeCoordinateSegment(bool isFirst, const Coordinate* coords, size_t count);
 	#ifdef GEODESK_WITH_GEOS
-	void writeCoordSequence(geos::geom::GeometryFactory* context, const GEOSCoordSequence* coords);
-	void writePointCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr point);
-	void writeLineStringCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr line);
-	void writePolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr polygon);
-	void writeMultiPolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr multiPolygon);
-	void writeGeometryCoordinates(geos::geom::GeometryFactory* context, int type, const geos::geom::Geometry::Ptr geom);
+	void writeCoordSequence(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence::Ptr coords);
+	void writePointCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Point& point);
+	void writeLineStringCoordinates(geos::geom::GeometryFactory* context, const geos::geom::LineString& line);
+	void writePolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Polygon& polygon);
+	void writeMultiPolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::MultiPolygon& multiPolygon);
+	void writeGeometryCoordinates(geos::geom::GeometryFactory* context, geos::geom::GeometryTypeId type, const geos::geom::Geometry& geom);
 
 	void writeMultiGeometryCoordinates(
-		geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr multi, 
-		std::function<void(geos::geom::GeometryFactory*, const geos::geom::Geometry::Ptr)> writeFunc)
+		geos::geom::GeometryFactory* context, const geos::geom::MultiPolygon& multi, 
+		std::function<void(geos::geom::GeometryFactory*, const geos::geom::Geometry*)> writeFunc)
 	{
 		writeByte(coordGroupStartChar_);
-		int count = GEOSGetNumGeometries_r(context, multi);
+		int count = multi.getNumGeometries();
 		for (int i = 0; i < count; i++) 
 		{
 			if(i > 0) writeByte(',');
-			const geos::geom::Geometry::Ptr geom = GEOSGetGeometryN_r(context, multi, i);
+			const geos::geom::Geometry* geom = multi.getGeometryN(i);
 			writeFunc(context, geom);
 		}
 		writeByte(coordGroupEndChar_);

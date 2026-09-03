@@ -4,44 +4,23 @@
 #ifdef GEODESK_WITH_GEOS
 #include <geodesk/geom/Distance.h>
 #include <geodesk/geom/geos/Geos.h>
+#include <geos/operation/distance/DistanceOp.h>
 
 namespace geodesk {
 
 bool Geos::centroid(geos::geom::GeometryFactory* context,
     const geos::geom::Geometry::Ptr geom, Coordinate* centroid)
 {
-    double x, y;
-    geos::geom::Geometry::Ptr c = GEOSGetCentroid_r(context, geom);
+    std::unique_ptr<geos::geom::Point> c = geom->getCentroid();
     if (!c) return false;
-    GEOSGeomGetX_r(context, c, &x);
-    GEOSGeomGetY_r(context, c, &y);
-    GEOSGeom_destroy_r(context, c);
-    *centroid = Coordinate(x, y);
+    *centroid = Coordinate(c->getX(), c->getY());
     return true;
 }
 
 double Geos::distanceMeters(geos::geom::GeometryFactory* context,
     const geos::geom::Geometry::Ptr geom1, const geos::geom::Geometry::Ptr geom2)
 {
-
-    GEOSCoordSequence *nearestPoints = GEOSNearestPoints_r
-        (context, geom1, geom2);
-    if (!nearestPoints) [[unlikely]] return -1;
-
-    double d;
-    double x1, x2, y1, y2;
-    if (GEOSCoordSeq_getXY_r(context, nearestPoints, 0, &x1, &y1) &&
-        GEOSCoordSeq_getXY_r(context, nearestPoints, 1, &x2, &y2))
-        [[likely]]
-    {
-        d = Distance::metersBetween(x1,y1,x2,y2);
-    }
-    else
-    {
-        d = -1;
-    }
-    GEOSCoordSeq_destroy(nearestPoints);
-    return d;
+    return geos::operation::distance::DistanceOp::distance(*geom1, *geom2);
 }
 
 

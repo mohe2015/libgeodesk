@@ -122,7 +122,7 @@ MCIndex MCIndexBuilder::build(Box bounds)
 
 #ifdef GEODESK_WITH_GEOS
 
-void MCIndexBuilder::segmentizeCoords(geos::geom::GeometryFactory* context, const GEOSCoordSequence* coords)
+void MCIndexBuilder::segmentizeCoords(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence::Ptr coords)
 {
 	CoordSequenceSlicer slicer(context, coords);
 	do
@@ -147,7 +147,7 @@ void MCIndexBuilder::segmentizePolygon(geos::geom::GeometryFactory* context, con
 	// TODO: empty polygons
 	const geos::geom::Geometry::Ptr ring = GEOSGetExteriorRing_r(context, polygon);
 	if (ring == NULL) return;
-	const GEOSCoordSequence* seq = GEOSGeom_getCoordSeq_r(context, ring);
+	const geos::geom::CoordinateSequence::Ptr seq = GEOSGeom_getCoordSeq_r(context, ring);
 	segmentizeCoords(context, seq);
 	int holeCount = GEOSGetNumInteriorRings_r(context, polygon);
 	for (int i = 0; i < holeCount; ++i) 
