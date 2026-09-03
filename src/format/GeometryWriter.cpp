@@ -35,9 +35,9 @@ void GeometryWriter::writeCoordinateSegment(bool isFirst, const Coordinate* p, s
 }
 
 #ifdef GEODESK_WITH_GEOS
-void GeometryWriter::writeCoordSequence(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence::Ptr coords)
+void GeometryWriter::writeCoordSequence(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence& coords)
 {
-	GeosCoordinateIterator iter(context, *&coords);
+	GeosCoordinateIterator iter(context, coords);
     writeCoordinates(iter);
 }
 
@@ -50,7 +50,7 @@ void GeometryWriter::writePointCoordinates(geos::geom::GeometryFactory* context,
 
 void GeometryWriter::writeLineStringCoordinates(geos::geom::GeometryFactory* context, const geos::geom::LineString& line)
 {
-    writeCoordSequence(context, line.getCoordinates());
+    writeCoordSequence(context, *line.getCoordinates());
 }
 
 
@@ -58,14 +58,14 @@ void GeometryWriter::writePolygonCoordinates(geos::geom::GeometryFactory* contex
 {
     writeByte(coordGroupStartChar_);
     const geos::geom::LinearRing* exteriorRing = polygon.getExteriorRing();
-    writeCoordSequence(context, exteriorRing->getCoordinates());
+    writeCoordSequence(context, *exteriorRing->getCoordinates());
 
     int numInteriorRings = polygon.getNumInteriorRing();
     for (int i = 0; i < numInteriorRings; i++)
     {
         const geos::geom::LinearRing* interiorRing = polygon.getInteriorRingN(i);
         writeByte(',');  // TODO: always comma for all formats?
-        writeCoordSequence(context, interiorRing->getCoordinates());
+        writeCoordSequence(context, *interiorRing->getCoordinates());
     }
     writeByte(coordGroupEndChar_);
 }

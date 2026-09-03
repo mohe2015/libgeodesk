@@ -48,18 +48,18 @@ const Filter* PreparedFilterFactory::forGeometry(geos::geom::GeometryFactory* co
 	geos::geom::GeometryTypeId geomType = geom.getGeometryTypeId();
 	switch (geomType)
 	{
-	case geos::geom::GeometryTypeId::GEOS_POINT:
+	case geos::geom::GeometryTypeId::GEOS_POINT: {
 		auto& pt = dynamic_cast<const geos::geom::Point&>(geom);
 		return forCoordinate(Coordinate(pt.getX(), pt.getY()));
-
+	}
 	case geos::geom::GeometryTypeId::GEOS_LINESTRING:
-	case geos::geom::GeometryTypeId::GEOS_LINEARRING:
+	case geos::geom::GeometryTypeId::GEOS_LINEARRING: {
 		const geos::geom::CoordinateSequence::Ptr seq = geom.getCoordinates();
 		unsigned int coordLen = seq->getSize();
 		indexBuilder_.segmentizeCoords(context, *seq);
 		bounds_ = Geos::getEnvelope(context, geom);
 		return forLineal();
-
+	}
 	case geos::geom::GeometryTypeId::GEOS_POLYGON:
 		indexBuilder_.segmentizePolygon(context, dynamic_cast<const geos::geom::Polygon&>(geom));
 		bounds_ = Geos::getEnvelope(context, geom);

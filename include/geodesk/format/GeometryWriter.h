@@ -54,7 +54,7 @@ protected:
 
 	void writeCoordinateSegment(bool isFirst, const Coordinate* coords, size_t count);
 	#ifdef GEODESK_WITH_GEOS
-	void writeCoordSequence(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence::Ptr coords);
+	void writeCoordSequence(geos::geom::GeometryFactory* context, const geos::geom::CoordinateSequence& coords);
 	void writePointCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Point& point);
 	void writeLineStringCoordinates(geos::geom::GeometryFactory* context, const geos::geom::LineString& line);
 	void writePolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::Polygon& polygon);

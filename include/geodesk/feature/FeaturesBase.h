@@ -231,7 +231,7 @@ public:
     /// @param context  GEOS context associated with @p geom
     /// @param geom     GEOS geometry used as the intersection filter
     ///
-    FeaturesBase intersecting(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const
+    FeaturesBase intersecting(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const
     {
         return { view_.withFilter(Filters::intersecting(context, geom))};
     }
@@ -244,7 +244,7 @@ public:
     /// @param context  GEOS context associated with @p geom
     /// @param geom     GEOS geometry used as the containment filter
     ///
-    FeaturesBase within(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const
+    FeaturesBase within(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const
     {
         return { view_.withFilter(Filters::within(context, geom))};
     }
@@ -258,7 +258,7 @@ public:
     /// @param geom     GEOS geometry that must lie entirely within
     ///                 each returned feature's geometry
     ///
-    FeaturesBase containing(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const
+    FeaturesBase containing(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const
     {
         return { view_.withFilter(Filters::containing(context, geom))};
     }
@@ -271,7 +271,7 @@ public:
     /// @param context  GEOS context associated with @p geom
     /// @param geom     GEOS geometry used as the crossing filter
     ///
-    FeaturesBase crossing(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const
+    FeaturesBase crossing(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const
     {
         return { view_.withFilter(Filters::crossing(context, geom))};
     }

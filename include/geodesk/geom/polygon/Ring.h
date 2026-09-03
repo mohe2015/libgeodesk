@@ -31,9 +31,9 @@ public:
     Ring* firstInner() const { return firstInner_; }
     void calculateBounds();
     #ifdef GEODESK_WITH_GEOS
-    geos::geom::CoordinateSequence::Ptr createCoordSequence(geos::geom::GeometryFactory* context);
-    geos::geom::Geometry::Ptr createLinearRing(geos::geom::GeometryFactory* context);
-    geos::geom::Geometry::Ptr createPolygon(geos::geom::GeometryFactory* context, clarisma::Arena& arena);
+    geos::geom::CoordinateSequence createCoordSequence(geos::geom::GeometryFactory* context);
+    std::unique_ptr<geos::geom::LinearRing> createLinearRing(geos::geom::GeometryFactory* context);
+    std::unique_ptr<geos::geom::Polygon> createPolygon(geos::geom::GeometryFactory* context, clarisma::Arena& arena);
     #endif
     #ifdef GEODESK_WITH_OGR
     OGRLinearRing* createOgrLinearRing() const;
