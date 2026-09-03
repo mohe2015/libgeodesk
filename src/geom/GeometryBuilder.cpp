@@ -34,12 +34,16 @@ geos::geom::Geometry::Ptr GeometryBuilder::buildWayGeometry(const FeaturePtr way
 // TODO: consolidate with buildPointGeometry
 geos::geom::Geometry::Ptr GeometryBuilder::buildNodeGeometry(const NodePtr node, geos::geom::GeometryFactory* geosContext)
 {
-	return geosContext->createPoint(geos::geom::CoordinateXY(node.x(), node.y()));
+	geos::geom::CoordinateSequence coordSeq = geos::geom::CoordinateSequence::XY(1);
+    coordSeq.setAt(geos::geom::CoordinateXY(node.x(), node.y()), 0);
+    return geosContext->createPoint(std::move(coordSeq));
 }
 
 geos::geom::Geometry::Ptr GeometryBuilder::buildPointGeometry(int32_t x, int32_t y, geos::geom::GeometryFactory* geosContext)
 {
-	return geosContext->createPoint(geos::geom::CoordinateXY(x, y));
+	geos::geom::CoordinateSequence coordSeq = geos::geom::CoordinateSequence::XY(1);
+    coordSeq.setAt(geos::geom::CoordinateXY(x, y), 0);
+    return geosContext->createPoint(std::move(coordSeq));
 }
 
 
