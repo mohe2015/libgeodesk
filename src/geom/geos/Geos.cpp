@@ -9,18 +9,18 @@
 namespace geodesk {
 
 bool Geos::centroid(geos::geom::GeometryFactory* context,
-    const geos::geom::Geometry::Ptr geom, Coordinate* centroid)
+    const geos::geom::Geometry& geom, Coordinate* centroid)
 {
-    std::unique_ptr<geos::geom::Point> c = geom->getCentroid();
+    std::unique_ptr<geos::geom::Point> c = geom.getCentroid();
     if (!c) return false;
     *centroid = Coordinate(c->getX(), c->getY());
     return true;
 }
 
 double Geos::distanceMeters(geos::geom::GeometryFactory* context,
-    const geos::geom::Geometry::Ptr geom1, const geos::geom::Geometry::Ptr geom2)
+    const geos::geom::Geometry& geom1, const geos::geom::Geometry& geom2)
 {
-    return geos::operation::distance::DistanceOp::distance(*geom1, *geom2);
+    return geos::operation::distance::DistanceOp::distance(geom1, geom2);
 }
 
 

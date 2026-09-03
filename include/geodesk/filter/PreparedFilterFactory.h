@@ -18,7 +18,7 @@ class PreparedFilterFactory
 public:
 	const Filter* forFeature(FeatureStore* store, FeaturePtr feature);
 	#ifdef GEODESK_WITH_GEOS
-	const Filter* forGeometry(geos::geom::GeometryFactory* geosContext, const geos::geom::Geometry::Ptr geom);
+	const Filter* forGeometry(geos::geom::GeometryFactory* geosContext, const geos::geom::Geometry& geom);
 	#endif
 	const Filter* forBox(const Box& box);
 	virtual const Filter* forCoordinate(Coordinate point) { return nullptr; };
@@ -40,7 +40,7 @@ protected:
 		return nullptr;
 	};
 	#ifdef GEODESK_WITH_GEOS
-	virtual const Filter* forGeometryCollection(geos::geom::GeometryFactory* geosContext, const geos::geom::Geometry::Ptr geom)
+	virtual const Filter* forGeometryCollection(geos::geom::GeometryFactory* geosContext, const geos::geom::Geometry& geom)
 	{
 		return nullptr;
 	};

@@ -14,16 +14,16 @@ namespace geodesk {
 class Geos
 {
 public:
-	static Box getEnvelope(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom)
+	static Box getEnvelope(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom)
 	{
-		return Box(geom->getEnvelopeInternal());
+		return Box(geom.getEnvelopeInternal());
 	}
 
 	static bool centroid(geos::geom::GeometryFactory* context,
-		const geos::geom::Geometry::Ptr geom, Coordinate* centroid);
+		const geos::geom::Geometry& geom, Coordinate* centroid);
 
 	static double distanceMeters(geos::geom::GeometryFactory* context,
-		const geos::geom::Geometry::Ptr geom1, const geos::geom::Geometry::Ptr geom2);
+		const geos::geom::Geometry& geom1, const geos::geom::Geometry& geom2);
 };
 
 } // namespace geodesk

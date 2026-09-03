@@ -43,43 +43,35 @@ const Filter* PreparedFilterFactory::forFeature(FeatureStore* store, FeaturePtr 
 }
 
 #ifdef GEODESK_WITH_GEOS
-const Filter* PreparedFilterFactory::forGeometry(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom)
+const Filter* PreparedFilterFactory::forGeometry(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom)
 {
-	int geomType = GEOSGeomTypeId_r(context, geom);
-	unsigned int coordLen;
-	const geos::geom::CoordinateSequence::Ptr seq;
+	geos::geom::GeometryTypeId geomType = geom.getGeometryTypeId();
 	switch (geomType)
 	{
-	case GEOS_POINT:
-		seq = GEOSGeom_getCoordSeq_r(context, geom);
-		if (seq == NULL) return nullptr;
-		GEOSCoordSeq_getSize_r(context, seq, &coordLen);
-		if (coordLen == 0) return nullptr;
-		double x, y;
-		GEOSCoordSeq_getXY_r(context, seq, 0, &x, &y);
-		return forCoordinate(Coordinate(x, y));
+	case geos::geom::GeometryTypeId::GEOS_POINT:
+		auto& pt = dynamic_cast<const geos::geom::Point&>(geom);
+		return forCoordinate(Coordinate(pt.getX(), pt.getY()));
 
-	case GEOS_LINESTRING:
-	case GEOS_LINEARRING:
-		seq = GEOSGeom_getCoordSeq_r(context, geom);
-		if (seq == NULL) return nullptr;
-		GEOSCoordSeq_getSize_r(context, seq, &coordLen);
+	case geos::geom::GeometryTypeId::GEOS_LINESTRING:
+	case geos::geom::GeometryTypeId::GEOS_LINEARRING:
+		const geos::geom::CoordinateSequence::Ptr seq = geom.getCoordinates();
+		unsigned int coordLen = seq->getSize();
 		if (coordLen == 0) return nullptr;
-		indexBuilder_.segmentizeCoords(context, seq);
+		indexBuilder_.segmentizeCoords(context, *seq);
 		bounds_ = Geos::getEnvelope(context, geom);
 		return forLineal();
 
-	case GEOS_POLYGON:
+	case geos::geom::GeometryTypeId::GEOS_POLYGON:
 		indexBuilder_.segmentizePolygon(context, geom);
 		bounds_ = Geos::getEnvelope(context, geom);
 		return forPolygonal();
 
-	case GEOS_MULTIPOLYGON:
+	case geos::geom::GeometryTypeId::GEOS_MULTIPOLYGON:
 	{
-		int count = GEOSGetNumGeometries_r(context, geom);
+		int count = geom.getNumGeometries();
 		for (int i = 0; i < count; i++)
 		{
-			const geos::geom::Geometry::Ptr child = GEOSGetGeometryN_r(context, geom, i);
+			const geos::geom::Geometry& child = *geom.getGeometryN(i);
 			indexBuilder_.segmentizePolygon(context, child);
 		}
 		bounds_ = Geos::getEnvelope(context, geom);
