@@ -74,7 +74,7 @@ void GeometryWriter::writePolygonCoordinates(geos::geom::GeometryFactory* contex
 void GeometryWriter::writeMultiPolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::MultiPolygon& multiPolygon)
 {
     writeMultiGeometryCoordinates(context, multiPolygon,
-        [this](geos::geom::GeometryFactory* ctx, const geos::geom::Geometry::Ptr g)
+        [this](geos::geom::GeometryFactory* ctx, const geos::geom::Polygon& g)
         {
             writePolygonCoordinates(ctx, g);
         });
@@ -96,15 +96,15 @@ void GeometryWriter::writeGeometryCoordinates(
         writePolygonCoordinates(context, dynamic_cast<const geos::geom::Polygon&>(geom));
         break;
     case geos::geom::GeometryTypeId::GEOS_MULTIPOINT:
-        writeMultiGeometryCoordinates(context, dynamic_cast<const geos::geom::MultiPolygon&>(geom),
-            [this](geos::geom::GeometryFactory* ctx, const geos::geom::Geometry::Ptr g)
+        writeMultiGeometryCoordinates(context, dynamic_cast<const geos::geom::MultiPoint&>(geom),
+            [this](geos::geom::GeometryFactory* ctx, const geos::geom::Point& g)
             {
                 writePointCoordinates(ctx, g);
             });
         break;
     case geos::geom::GeometryTypeId::GEOS_MULTILINESTRING:
         writeMultiGeometryCoordinates(context, dynamic_cast<const geos::geom::MultiPolygon&>(geom), 
-            [this](geos::geom::GeometryFactory* ctx, const geos::geom::Geometry::Ptr g)
+            [this](geos::geom::GeometryFactory* ctx, const geos::geom::Polygon& g)
             {
                 writeLineStringCoordinates(ctx, g);
             });

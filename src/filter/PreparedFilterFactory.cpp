@@ -56,25 +56,25 @@ const Filter* PreparedFilterFactory::forGeometry(geos::geom::GeometryFactory* co
 	case geos::geom::GeometryTypeId::GEOS_LINEARRING:
 		const geos::geom::CoordinateSequence::Ptr seq = geom.getCoordinates();
 		unsigned int coordLen = seq->getSize();
-		if (coordLen == 0) return nullptr;
 		indexBuilder_.segmentizeCoords(context, *seq);
 		bounds_ = Geos::getEnvelope(context, geom);
 		return forLineal();
 
 	case geos::geom::GeometryTypeId::GEOS_POLYGON:
-		indexBuilder_.segmentizePolygon(context, geom);
+		indexBuilder_.segmentizePolygon(context, dynamic_cast<const geos::geom::Polygon&>(geom));
 		bounds_ = Geos::getEnvelope(context, geom);
 		return forPolygonal();
 
 	case geos::geom::GeometryTypeId::GEOS_MULTIPOLYGON:
 	{
-		int count = geom.getNumGeometries();
+		auto& multiPoly = dynamic_cast<const geos::geom::MultiPolygon&>(geom);
+		int count = multiPoly.getNumGeometries();
 		for (int i = 0; i < count; i++)
 		{
-			const geos::geom::Geometry& child = *geom.getGeometryN(i);
+			const geos::geom::Polygon& child = *multiPoly.getGeometryN(i);
 			indexBuilder_.segmentizePolygon(context, child);
 		}
-		bounds_ = Geos::getEnvelope(context, geom);
+		bounds_ = Geos::getEnvelope(context, multiPoly);
 		return forPolygonal();
 	}
 

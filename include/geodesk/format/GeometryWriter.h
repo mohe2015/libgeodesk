@@ -61,16 +61,19 @@ protected:
 	void writeMultiPolygonCoordinates(geos::geom::GeometryFactory* context, const geos::geom::MultiPolygon& multiPolygon);
 	void writeGeometryCoordinates(geos::geom::GeometryFactory* context, geos::geom::GeometryTypeId type, const geos::geom::Geometry& geom);
 
+	template <typename MultiType, typename WriteFunc>
 	void writeMultiGeometryCoordinates(
-		geos::geom::GeometryFactory* context, const geos::geom::MultiPolygon& multi, 
-		std::function<void(geos::geom::GeometryFactory*, const geos::geom::Geometry*)> writeFunc)
+		geos::geom::GeometryFactory* context, 
+		const MultiType& multi, 
+		WriteFunc&& writeFunc)
 	{
 		writeByte(coordGroupStartChar_);
-		int count = multi.getNumGeometries();
-		for (int i = 0; i < count; i++) 
+		std::size_t count = multi.getNumGeometries();
+		for (std::size_t i = 0; i < count; i++) 
 		{
-			if(i > 0) writeByte(',');
-			const geos::geom::Geometry* geom = multi.getGeometryN(i);
+			if (i > 0) writeByte(',');
+			// 'geom' deduces to Point&, Polygon&, or Geometry& based on MultiType
+			const auto& geom = *multi.getGeometryN(i);
 			writeFunc(context, geom);
 		}
 		writeByte(coordGroupEndChar_);
