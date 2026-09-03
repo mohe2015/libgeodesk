@@ -20,7 +20,13 @@ bool Geos::centroid(geos::geom::GeometryFactory* context,
 double Geos::distanceMeters(geos::geom::GeometryFactory* context,
     const geos::geom::Geometry& geom1, const geos::geom::Geometry& geom2)
 {
-    return geos::operation::distance::DistanceOp::distance(geom1, geom2);
+    auto nearestPoints = geos::operation::distance::DistanceOp::nearestPoints(&geom1, &geom2);
+    double x1 = nearestPoints->getX(0);
+    double y1 = nearestPoints->getY(0);
+    double x2 = nearestPoints->getX(1);
+    double y2 = nearestPoints->getY(1);
+
+    return Distance::metersBetween(x1, y1, x2, y2);
 }
 
 

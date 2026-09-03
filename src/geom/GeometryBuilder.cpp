@@ -23,7 +23,7 @@ geos::geom::Geometry::Ptr GeometryBuilder::buildWayGeometry(const FeaturePtr way
 	}
 	if (areaFlag)
 	{
-		return geosContext->createPolygon(std::move(coordSeq));
+		return geosContext->createPolygon(geosContext->createLinearRing(std::move(coordSeq)));
 	}
 	else
 	{

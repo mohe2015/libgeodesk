@@ -328,7 +328,7 @@ public:
     /// @param context  GEOS context associated with @p geom
     /// @param geom     GEOS geometry used as the containment filter
     ///
-    Features within(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const;
+    Features within(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const;
 
     /// @brief Only features whose geometry contains the
     /// given Feature.
@@ -347,7 +347,7 @@ public:
     /// @param geom     GEOS geometry that must lie entirely within
     ///                 each returned feature's geometry
     ///
-    Features containing(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const;
+    Features containing(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const;
 
     /// @brief Only features whose geometry contains the
     /// given Coordinate.
@@ -378,7 +378,7 @@ public:
     /// @param context  GEOS context associated with @p geom
     /// @param geom     GEOS geometry used as the crossing filter
     ///
-    Features crossing(geos::geom::GeometryFactory* context, const geos::geom::Geometry::Ptr geom) const;
+    Features crossing(geos::geom::GeometryFactory* context, const geos::geom::Geometry& geom) const;
 
     /// @brief Only features whose closest point lies within
     /// `distance` meters of `xy`.
