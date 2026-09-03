@@ -172,7 +172,7 @@ geos::geom::Geometry::Ptr Polygonizer::createPolygonal(geos::geom::GeometryFacto
 {
     if (outerRings_ == nullptr)
     {
-        return GEOSGeom_createEmptyPolygon_r(context);
+        return context->createPolygon();
     }
 
     int ringCount = 0;

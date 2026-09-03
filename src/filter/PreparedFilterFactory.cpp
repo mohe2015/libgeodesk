@@ -60,11 +60,11 @@ const Filter* PreparedFilterFactory::forGeometry(geos::geom::GeometryFactory* co
 		bounds_ = Geos::getEnvelope(context, geom);
 		return forLineal();
 	}
-	case geos::geom::GeometryTypeId::GEOS_POLYGON:
+	case geos::geom::GeometryTypeId::GEOS_POLYGON: {
 		indexBuilder_.segmentizePolygon(context, dynamic_cast<const geos::geom::Polygon&>(geom));
 		bounds_ = Geos::getEnvelope(context, geom);
 		return forPolygonal();
-
+	}
 	case geos::geom::GeometryTypeId::GEOS_MULTIPOLYGON:
 	{
 		auto& multiPoly = dynamic_cast<const geos::geom::MultiPolygon&>(geom);
