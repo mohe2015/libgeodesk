@@ -103,8 +103,8 @@ void GeometryWriter::writeGeometryCoordinates(
             });
         break;
     case geos::geom::GeometryTypeId::GEOS_MULTILINESTRING:
-        writeMultiGeometryCoordinates(context, dynamic_cast<const geos::geom::MultiPolygon&>(geom), 
-            [this](geos::geom::GeometryFactory* ctx, const geos::geom::Polygon& g)
+        writeMultiGeometryCoordinates(context, dynamic_cast<const geos::geom::MultiLineString&>(geom), 
+            [this](geos::geom::GeometryFactory* ctx, const geos::geom::LineString& g)
             {
                 writeLineStringCoordinates(ctx, g);
             });
