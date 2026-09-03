@@ -8,6 +8,7 @@
 namespace clarisma {
 
 class Buffer;
+class BufferWriter;
 
 class Json
 {
@@ -30,6 +31,9 @@ public:
 	 * @param s   The input string to escape.
 	 */
 	static void writeEscaped(Buffer& out, std::string_view s);
+
+	// TODO: deprecate
+	static void writeEscaped(BufferWriter& out, std::string_view s);
 
 	/// @brief Skips over a JSON object.
 	///
