@@ -29,7 +29,7 @@ void LeafletFormatter::writeHeader(Buffer& out, const LeafletSettings& settings,
 	out <<  "\"></script>\n";
 	if (settings.useRequestedWithHeader)
 	{
-		out << "<script src=\"https://unpkg.com/leaflet-header/index.js\"></script>";
+		out << "<script src=\"https://unpkg.com/leaflet-wms-header@1.0.13/index.js\"></script>";
 	}
 	out << "<style>\n#map {height: 100%;}\nbody {margin:0;}\n";
 	if(extraStyles) out << extraStyles;
@@ -41,7 +41,9 @@ void LeafletFormatter::writeHeader(Buffer& out, const LeafletSettings& settings,
 	out << "';\nvar tilesAttrib=\"";
 	Json::writeEscaped(out, settings.attribution);
 	out <<
-		"\";\nvar tileLayer = new L.TileLayer("
+		"\";\nvar tileLayer = " <<
+			(settings.useRequestedWithHeader ?
+				"L.TileLayer.wmsHeader(" : "new L.TileLayer(") <<
 		"tilesUrl, {minZoom: " << settings.minZoom
 		<< ", maxZoom: " << settings.maxZoom <<
 		", attribution: tilesAttrib}, ";

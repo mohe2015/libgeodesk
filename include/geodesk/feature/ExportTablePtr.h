@@ -22,12 +22,14 @@ public:
 	explicit ExportTablePtr(const uint8_t* p) : DataPtr(p) {}
 	explicit ExportTablePtr(DataPtr p) : DataPtr(p) {}
 
-	uint32_t count() const { return getUnsignedInt(); }
+	uint32_t count() const { return (*this - 4).getUnsignedInt(); }
 	FeaturePtr featureAt(Tex tex) const
 	{
 		uint32_t slot = static_cast<uint32_t>(tex);
 		assert(slot < count());
-		return FeaturePtr((*this + slot * 4).follow());
+		DataPtr slotPtr(*this + slot * 4);
+		int32_t relPtr = slotPtr.getInt();
+		return FeaturePtr(relPtr==0 ? DataPtr() : (slotPtr + relPtr));
 	}
 };
 
